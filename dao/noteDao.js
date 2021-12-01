@@ -39,6 +39,20 @@ function updateNote(title,content,tag,nid){
     })
 }
 
+// 查找所有贴文
+function findAllNote(){
+    let sql = "SELECT nid,uid,name,title,content,tag,date FROM note,user WHERE note.uid = user.id";
+    return new Promise((resolve,reject)=>{
+        query(sql,null,function(err,res){
+            if(err){
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        })
+    })
+}
+
 // 查找贴文
 function findNote(nid){
     let sql = "SELECT nid,uid,name,title,content,tag,date FROM note,user WHERE nid = ? AND note.uid = user.id";
@@ -56,7 +70,7 @@ function findNote(nid){
 
 // 查找某个用户的贴文
 function findUserNote(uid){
-    let sql = "SELECT * FROM note WHERE uid = ?";
+    let sql = "SELECT nid,uid,name,title,content,tag,date FROM note,user WHERE uid = ? AND note.uid = user.id";
     let sqlParams = [uid];
     return new Promise((resolve,reject)=>{
         query(sql,sqlParams,function(err,res){
@@ -70,9 +84,9 @@ function findUserNote(uid){
 }
 
 // 删除贴文
-function deleteNote(nid){
-    let sql = "delete from note where nid = ?";
-    let sqlParams = [nid];
+function deleteNote(nid,uid){
+    let sql = "delete from note where nid = ? and uid = ?";
+    let sqlParams = [nid,uid];
     return new Promise((resolve,reject)=>{
         query(sql,sqlParams,function(err,res){
             if(err){
@@ -89,5 +103,6 @@ module.exports = {
     updateNote,
     findNote,
     findUserNote,
+    findAllNote,
     deleteNote,
 }

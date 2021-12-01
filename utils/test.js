@@ -17,26 +17,27 @@ const {
     findNote,
     findUserNote,
     deleteNote,
+    findAllNote,
 } = require("../dao/noteDao");
 
 let user = new User('小明', '124324');
 
-deleteNote(2).then(res=>{
-    console.log("delete success");
-})
-// findUserNote(1).then(res=>{
-//     console.log(res);
-//     const {nid,title,content,tag,date,uid,name} = res[1];
-//     // console.log(tag);
-//     let note = new Note(nid,title,content,uid,date,name,toArr(tag));
-//     console.log(note.getDate);
+// deleteNote(2).then(res=>{
+//     console.log("delete success");
 // })
-// findNote(1).then(res=>{
+findUserNote(1).then(res=>{
+    console.log(res);
+    const {nid,title,content,tag,date,uid,name} = res[1];
+    // console.log(tag);
+    let note = new Note(nid,title,content,uid,date,name,toArr(tag));
+    console.log(note.getDate);
+})
+// findAllNote().then(res=>{
 //     console.log(res);
-//     const {nid,title,content,tag,date,uid,name} = res[0];
-//     // console.log(tag);
-//     let note = new Note(nid,title,content,uid,date,name,toArr(tag));
-//     console.log(note.getDate);
+//     // const {nid,title,content,tag,date,uid,name} = res[0];
+//     // // console.log(tag);
+//     // let note = new Note(nid,title,content,uid,date,name,toArr(tag));
+//     // console.log(note.getDate);
 // })
 // findNote(1).then(res=>{
 //     console.log(res);

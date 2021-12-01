@@ -1,7 +1,7 @@
 
 // 字符串转数组
 function toArr(str){
-    return str.split(",");
+    return str.split(",").map((item)=>parseInt(item));
 }
 
 // 数组转字符串
