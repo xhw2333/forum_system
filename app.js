@@ -1,6 +1,6 @@
 var express = require("express");
 var bodyParser = require("body-parser");
-var router = require("./routes/router.js");
+var userRouter = require("./routes/userRouter.js");
 const cors = require('cors');
 
 var app = express();
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use('/',express.static('./views/'));
 
 //挂在路由
-app.use(router);
+app.use(userRouter);
 
 
 app.listen(3000,function(){
