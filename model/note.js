@@ -1,6 +1,6 @@
 const {formatDate} = require("../utils/format");
 class Note{
-    constructor(nid,title,content,uid,date,author,tag){
+    constructor(nid,title,content,uid,date,author,tag,comment,praise){
         this.nid = nid;
         this.title = title;
         this.content = content;
@@ -8,6 +8,8 @@ class Note{
         this.author = author;
         this.tag = tag || [];
         this.date = formatDate(date);
+        this.comment = comment;
+        this.praise = praise;
     }
 
     set setTitle(val){

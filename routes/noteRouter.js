@@ -2,7 +2,6 @@ const express = require('express');
 const Note = require("../model/note");
 const { addNote, findNote, findUserNote, deleteNote, updateNote, findAllNote } = require("../dao/noteDao");
 const { toArr, toStr } = require("../utils/typeChange");
-const { query } = require('express');
 
 // 创建路由容器
 const router = express.Router();
@@ -16,8 +15,9 @@ router.get('/notelist', function (req, res) {
     if ('nid' in query) {
         const { nid } = query;
         findNote(nid).then(note => {
-            const { nid, uid, name, title, content, date, tag } = note[0];
-            const data = new Note(nid, title, content, uid, date, name, toArr(tag));
+            console.log(note);
+            const { nid, uid, name, title, content, date, tag, comment, praise } = note[0];
+            const data = new Note(nid, title, content, uid, date, name, tag, comment, praise);
 
             res.status(200).json({
                 status: 1,
@@ -36,9 +36,10 @@ router.get('/notelist', function (req, res) {
     else if ('uid' in query) {
         const { uid } = query;
         findUserNote(uid).then(notes => {
+            console.log(notes);
             const data = notes.map((note, index) => {
-                const { nid, uid, name, title, content, date, tag } = note;
-                return new Note(nid, title, content, uid, date, name, toArr(tag));
+                const { nid, uid, name, title, content, date, tag, comment, praise } = note;
+                return new Note(nid, title, content, uid, date, name, tag, comment, praise);
             })
             res.status(200).json({
                 status: 1,
@@ -57,9 +58,10 @@ router.get('/notelist', function (req, res) {
     else {
         console.log('all');
         findAllNote().then(notes => {
+            console.log(notes);
             const data = notes.map((note, index) => {
-                const { nid, uid, name, title, content, date, tag } = note;
-                return new Note(nid, title, content, uid, date, name, toArr(tag));
+                const { nid, uid, name, title, content, date, tag, comment, praise } = note;
+                return new Note(nid, title, content, uid, date, name, tag, comment, praise);
             })
             res.status(200).json({
                 status: 1,
@@ -79,7 +81,7 @@ router.get('/notelist', function (req, res) {
 // 添加贴文
 router.post('/addnote', function (req, res) {
     const { title, content, tag, uid } = req.body;
-    addNote(title, content, toStr(tag), uid).then(res => {
+    addNote(title, content, tag, uid).then(res => {
         res.status(200).json({
             status: 1,
             data: null,
@@ -114,15 +116,15 @@ router.post('/deletenote', function (req, res) {
 })
 
 // 修改贴文
-router.post('/updatenote',function(req,res){
-    const {title,content,tag,nid} = req.body;
-    updateNote(title,content,toStr(tag),nid).then(res=>{
+router.post('/updatenote', function (req, res) {
+    const { title, content, tag, nid } = req.body;
+    updateNote(title, content, tag, nid).then(res => {
         res.status(200).json({
             status: 1,
             data: null,
             msg: '修改成功'
         })
-    }).catch(err=>{
+    }).catch(err => {
         res.status(500).json({
             status: -1,
             data: null,
