@@ -16,8 +16,8 @@ router.get('/notelist', function (req, res) {
         const { nid } = query;
         findNote(nid).then(note => {
             console.log(note);
-            const { nid, uid, name, title, content, date, tag, comment, praise } = note[0];
-            const data = new Note(nid, title, content, uid, date, name, tag, comment, praise);
+            const { nid, uid, name, title, content, date, tid, color, tag, comment, praise } = note[0];
+            const data = new Note(nid, title, content, uid, date, name, tid, color, tag, comment, praise);
 
             res.status(200).json({
                 status: 1,
@@ -38,8 +38,8 @@ router.get('/notelist', function (req, res) {
         findUserNote(uid).then(notes => {
             console.log(notes);
             const data = notes.map((note, index) => {
-                const { nid, uid, name, title, content, date, tag, comment, praise } = note;
-                return new Note(nid, title, content, uid, date, name, tag, comment, praise);
+                const { nid, uid, name, title, content, date, tid, color, tag, comment, praise } = note;
+                return new Note(nid, title, content, uid, date, name, tid, color, tag, comment, praise);
             })
             res.status(200).json({
                 status: 1,
@@ -60,8 +60,8 @@ router.get('/notelist', function (req, res) {
         findAllNote().then(notes => {
             console.log(notes);
             const data = notes.map((note, index) => {
-                const { nid, uid, name, title, content, date, tag, comment, praise } = note;
-                return new Note(nid, title, content, uid, date, name, tag, comment, praise);
+                const { nid, uid, name, title, content, date, tid, color, tag, comment, praise } = note;
+                return new Note(nid, title, content, uid, date, name, tid, color, tag, comment, praise);
             })
             res.status(200).json({
                 status: 1,
@@ -80,8 +80,8 @@ router.get('/notelist', function (req, res) {
 
 // 添加贴文
 router.post('/addnote', function (req, res) {
-    const { title, content, tag, uid } = req.body;
-    addNote(title, content, tag, uid).then(res => {
+    const { title, content, tid, uid } = req.body;
+    addNote(title, content, tid, uid).then(res => {
         res.status(200).json({
             status: 1,
             data: null,
@@ -117,8 +117,8 @@ router.post('/deletenote', function (req, res) {
 
 // 修改贴文
 router.post('/updatenote', function (req, res) {
-    const { title, content, tag, nid } = req.body;
-    updateNote(title, content, tag, nid).then(res => {
+    const { title, content, tid, nid } = req.body;
+    updateNote(title, content, tid, nid).then(res => {
         res.status(200).json({
             status: 1,
             data: null,

@@ -4,9 +4,8 @@ const query = require('../utils/myDB');
 // 获取标签列表
 function findTag(){
     let sql = `SELECT * FROM tag`;
-    let sqlParams = [nid,uid];
     return new Promise((resolve,reject)=>{
-        query(sql,sqlParams,function(err,res){
+        query(sql,null,function(err,res){
             if(err){
                 reject(err);
             } else {

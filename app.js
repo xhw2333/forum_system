@@ -31,8 +31,8 @@ app.use(friendRouter);
 app.use(tagRouter);
 
 
-app.listen(3000,function(){
-    console.log("http://localhost:3000 running");
+app.listen(8000,function(){
+    console.log("http://localhost:8000 running");
 })
 
 

@@ -1,13 +1,15 @@
 const {formatDate} = require("../utils/format");
 class Note{
-    constructor(nid,title,content,uid,date,author,tag,comment,praise){
+    constructor(nid,title,content,uid,date,author,tid,color,tag,comment,praise){
         this.nid = nid;
         this.title = title;
         this.content = content;
         this.uid = uid;
         this.author = author;
-        this.tag = tag || [];
+        this.tid = tid; //标签id 
         this.date = formatDate(date);
+        this.color = color; //标签颜色
+        this.tag = tag; //标签名
         this.comment = comment;
         this.praise = praise;
     }
