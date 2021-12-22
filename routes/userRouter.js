@@ -1,6 +1,8 @@
 const express = require("express");
 const User = require('../model/user');
 const { addUser, findUserByName, findUserByNameAndPwd, findAllUsers } = require('../dao/userDao');
+const {findFriendList} = require("../dao/friendDao");
+const {findUserNote,findNoteByTag} = require("../dao/noteDao");
 
 // 创建路由容器
 const router = express.Router();
@@ -98,6 +100,37 @@ router.get('/users', function (req, res) {
             msg: '',
         })
     })
+})
+
+// 获取用户基本情况
+router.post('/base',async (req,res)=>{
+    const {uid} = req.body;
+    try{
+        // 好友数
+        const friendList = await findFriendList(uid);
+        // 贴文数
+        const noteList = await findUserNote(uid);
+        // 贴文分类情况
+        const classify = await findNoteByTag(uid);
+        // console.log(friendList,noteList,classify)
+        res.status(200).json({
+            status:1,
+            data:{
+                friendCount: friendList.length,
+                noteTotal: noteList.length,
+                classify
+            },
+            msg: ''
+        })
+
+    }catch(e){
+        console.log(e);
+        res.status(500).json({
+            status: -1,
+            data: null,
+            msg: '',
+        })
+    }
 })
 
 
