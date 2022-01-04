@@ -1,4 +1,5 @@
 const express = require("express");
+const svgCaptcha = require('svg-captcha');
 const User = require('../model/user');
 const { addUser, findUserByName, findUserByNameAndPwd, updateUser, findAllUsers, findUserByKey } = require('../dao/userDao');
 const { findFriendList } = require("../dao/friendDao");
@@ -7,9 +8,21 @@ const { findUserNote, findNoteByTag } = require("../dao/noteDao");
 // 创建路由容器
 const router = express.Router();
 
+//存储验证码
+let serve_code = ''; 
+
 // 用户登录
 router.post('/login', async function (req, res) {
-    const { name, pwd } = req.body;
+    const { name, pwd,code } = req.body;
+    // 验证码错误
+    if(!code || code !== serve_code){
+        res.status(200).json({
+            status: 0,
+            data: null,
+            msg: '验证码错误'
+        })
+        return;
+    }
     try {
         const user = await findUserByNameAndPwd(name, pwd);
         if (user.length == 0) return res.status(200).json({
@@ -133,6 +146,29 @@ router.post('/base', async (req, res) => {
             msg: '',
         })
     }
+})
+
+// 获取验证码
+router.get('/code', function (req, res) {
+    var codeConfig = {
+        size: 4,// 验证码长度
+        ignoreChars: '0o1i', // 验证码字符中排除 0o1i
+        noise: 3, // 干扰线条的数量
+        width:100,
+        height: 40,
+        // background: '#fff'
+    }
+    // 生成验证码
+    var captcha = svgCaptcha.create(codeConfig);
+    serve_code = captcha.text.toLowerCase();
+    // console.log(serve_code);
+
+    // res.setHeader('Content-Type', 'image/svg+xml');
+    res.status(200).json({
+        status: 1,
+        msg: '验证码',
+        data:String(captcha.data),
+    });
 })
 
 // 搜索用户

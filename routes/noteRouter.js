@@ -1,6 +1,6 @@
 const express = require('express');
 const Note = require("../model/note");
-const { addNote, findNote, findUserNote, deleteNote, updateNote, findAllNote, findNoteByTid } = require("../dao/noteDao");
+const { addNote, findNote, findUserNote, deleteNote, updateNote, findAllNote, findNoteByTid,findNoteByKey } = require("../dao/noteDao");
 const { toArr, toStr } = require("../utils/typeChange");
 
 // 创建路由容器
@@ -62,9 +62,34 @@ router.get('/notelist', function (req, res) {
             })
         })
     }
+    // 根据标签查找贴文
     else if ("tid" in query) {
         const { tid } = query;
         findNoteByTid(tid).then(notes => {
+            console.log(notes);
+            const data = notes.map((note, index) => {
+                const { nid, uid, name, title, content, date, tid, color, tag, comment, praise } = note;
+                return new Note(nid, title, content, uid, date, name, tid, color, tag, comment, praise);
+            })
+
+            res.status(200).json({
+                status: 1,
+                data,
+                msg: ''
+            })
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({
+                status: -1,
+                data: null,
+                msg: '',
+            })
+        })
+    }
+    // 根据关键字查找贴文
+    else if("key" in query){
+        const {key} = query;
+        findNoteByKey(key).then(notes => {
             console.log(notes);
             const data = notes.map((note, index) => {
                 const { nid, uid, name, title, content, date, tid, color, tag, comment, praise } = note;
@@ -124,7 +149,7 @@ router.post('/addnote', function (req, res) {
         res.status(200).json({
             status: 1,
             data: null,
-            msg: '添加成功'
+            msg: '发表成功'
         })
     }).catch(err => {
         console.log(err);

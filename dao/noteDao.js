@@ -139,7 +139,38 @@ function findNoteByTid(tid) {
     })
 }
 
-
+// 根据关键字查找贴文
+function findNoteByKey(key){
+    let sql = `
+    select note.nid,uid,name,title,content,note.tid,date,comment,praise,color,tag
+    from 
+    (
+        select note.nid,count(comment.content) as comment from note left outer join comment
+        on note.nid = comment.nid
+        group by note.nid
+    ) as data1,
+    (
+        select note.nid,count(praise.uid) as praise from note left outer join praise
+        on note.nid = praise.nid
+        group by note.nid
+    ) as data2,
+    user,
+    note,
+    tag
+    where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid 
+    and (tag like '%${key}%' or name like '%${key}%' or title like '%${key}%' or content like '%${key}%')
+    `;
+    let sqlParams = [];
+    return new Promise((resolve, reject) => {
+        query(sql, sqlParams, function (err, res) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        })
+    })
+}
 
 // 查找某个用户的贴文
 function findUserNote(uid) {
@@ -218,4 +249,5 @@ module.exports = {
     deleteNote,
     findNoteByTag,
     findNoteByTid,
+    findNoteByKey,
 }
