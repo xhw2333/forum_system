@@ -1,6 +1,6 @@
 const express = require('express');
 const Note = require("../model/note");
-const { addNote, findNote, findUserNote, deleteNote, updateNote, findAllNote } = require("../dao/noteDao");
+const { addNote, findNote, findUserNote, deleteNote, updateNote, findAllNote, findNoteByTid } = require("../dao/noteDao");
 const { toArr, toStr } = require("../utils/typeChange");
 
 // 创建路由容器
@@ -54,6 +54,29 @@ router.get('/notelist', function (req, res) {
             })
         })
     }
+    else if ("tid" in query) {
+        const { tid } = query;
+        findNoteByTid(tid).then(notes => {
+            console.log(notes);
+            const data = notes.map((note, index) => {
+                const { nid, uid, name, title, content, date, tid, color, tag, comment, praise } = note;
+                return new Note(nid, title, content, uid, date, name, tid, color, tag, comment, praise);
+            })
+
+            res.status(200).json({
+                status: 1,
+                data,
+                msg: ''
+            })
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({
+                status: -1,
+                data: null,
+                msg: '',
+            })
+        })
+    }
     // 查询所有贴文
     else {
         console.log('all');
@@ -81,17 +104,18 @@ router.get('/notelist', function (req, res) {
 // 添加贴文
 router.post('/addnote', function (req, res) {
     const { title, content, tid, uid } = req.body;
-    addNote(title, content, tid, uid).then(res => {
+    addNote(title, content, tid, uid).then(result => {
         res.status(200).json({
             status: 1,
             data: null,
-            msh: '添加成功'
+            msg: '添加成功'
         })
     }).catch(err => {
+        console.log(err);
         res.status(500).json({
             status: -1,
             data: null,
-            msh: ''
+            msg: '服务器内部错误'
         })
     })
 
@@ -110,15 +134,15 @@ router.post('/deletenote', function (req, res) {
         res.status(500).json({
             status: -1,
             data: null,
-            msh: ''
+            msh: '服务器内部错误'
         })
     })
 })
 
 // 修改贴文
 router.post('/updatenote', function (req, res) {
-    const { title, content, tid, nid } = req.body;
-    updateNote(title, content, tid, nid).then(res => {
+    const { title, content, tid, nid,uid } = req.body;
+    updateNote(title, content, tid, nid,uid).then(result => {
         res.status(200).json({
             status: 1,
             data: null,

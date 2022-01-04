@@ -25,9 +25,9 @@ function addNote(title, content, tid, uid) {
 }
 
 // 修改贴文
-function updateNote(title, content, tid, nid) {
-    let sql = "update note set title = ? , content = ? ,tid = ? where nid =" + nid;
-    let sqlParams = [title, content, tid];
+function updateNote(title, content, tid, nid, uid) {
+    let sql = "update note set title = ? , content = ? ,tid = ? where nid = ? and uid = ?";
+    let sqlParams = [title, content, tid, nid, uid];
     return new Promise((resolve, reject) => {
         query(sql, sqlParams, function (err, res) {
             if (err) {
@@ -59,6 +59,7 @@ function findAllNote() {
         note,
         tag
         where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid
+        order by note.nid
     `;
     return new Promise((resolve, reject) => {
         query(sql, null, function (err, res) {
@@ -104,6 +105,40 @@ function findNote(nid) {
     })
 }
 
+// 查找贴文
+function findNoteByTid(tid) {
+    // let sql = "SELECT nid,uid,name,title,content,tag,date FROM note,user WHERE nid = ? AND note.uid = user.id";
+    let sql = `
+        select note.nid,uid,name,title,content,note.tid,date,comment,praise,color,tag
+        from 
+        (
+            select note.nid,count(comment.content) as comment from note left outer join comment
+            on note.nid = comment.nid
+            group by note.nid
+        ) as data1,
+        (
+            select note.nid,count(praise.uid) as praise from note left outer join praise
+            on note.nid = praise.nid
+            group by note.nid
+        ) as data2,
+        user,
+        note,
+        tag
+        where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid and note.tid = ? 
+        order by note.nid
+    `;
+    let sqlParams = [tid];
+    return new Promise((resolve, reject) => {
+        query(sql, sqlParams, function (err, res) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        })
+    })
+}
+
 
 
 // 查找某个用户的贴文
@@ -126,6 +161,7 @@ function findUserNote(uid) {
         note,
         tag
         where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid and note.uid = ? 
+        order by note.nid
     `;
     let sqlParams = [uid];
     return new Promise((resolve, reject) => {
@@ -180,5 +216,6 @@ module.exports = {
     findUserNote,
     findAllNote,
     deleteNote,
-    findNoteByTag
+    findNoteByTag,
+    findNoteByTid,
 }

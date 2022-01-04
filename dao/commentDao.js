@@ -33,7 +33,7 @@ function deleteComment(cid,uid){
 
 // 查找nid贴文的评论
 function findCommentByNid(nid){
-    let sql = `select cid,content,nid,uid,name,count(*) as commentNum from comment,user where nid = ? and user.id = comment.uid`;
+    let sql = `select cid,content,nid,uid,name from comment,user where nid = ? and user.id = comment.uid`;
     let sqlParams = [nid];
     return new Promise((resolve,reject)=>{
         query(sql,sqlParams,function(err,res){

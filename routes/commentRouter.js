@@ -47,6 +47,7 @@ router.post('/deletecomment', function (req, res) {
 router.get('/commentlist', function (req, res) {
     const { nid } = req.query;
     findCommentByNid(nid).then(list => {
+        console.log(list);
         const data = list.map((item) => {
             const { cid, content, nid, uid, name, commentNum } = item;
             return new Comment(cid, content, nid, uid, name);
