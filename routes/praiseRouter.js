@@ -8,6 +8,14 @@ const router = express.Router();
 // 点赞贴文
 router.post('/praise', function (req, res) {
     const { nid, uid } = req.body;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
     addPraise(nid, uid).then(msg => {
         res.status(200).json({
             status: 1,
@@ -27,7 +35,14 @@ router.post('/praise', function (req, res) {
 // 取消点赞贴文
 router.post('/cancelpraise', function (req, res) {
     const { nid, uid } = req.body;
-
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
     cancelPraise(nid, uid).then(msg => {
         res.status(200).json({
             status: 1,
@@ -47,6 +62,14 @@ router.post('/cancelpraise', function (req, res) {
 // 检查是否有点赞
 router.get('/ifpraise', function (req, res) {
     const { nid, uid } = req.query;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
     checkIfPraise(nid, uid).then(list => {
 
         res.status(200).json({

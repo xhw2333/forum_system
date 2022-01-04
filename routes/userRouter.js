@@ -1,17 +1,11 @@
 const express = require("express");
 const User = require('../model/user');
-const { addUser, findUserByName, findUserByNameAndPwd, findAllUsers } = require('../dao/userDao');
-const {findFriendList} = require("../dao/friendDao");
-const {findUserNote,findNoteByTag} = require("../dao/noteDao");
+const { addUser, findUserByName, findUserByNameAndPwd, updateUser, findAllUsers, findUserByKey } = require('../dao/userDao');
+const { findFriendList } = require("../dao/friendDao");
+const { findUserNote, findNoteByTag } = require("../dao/noteDao");
 
 // 创建路由容器
 const router = express.Router();
-
-router.get("/hello", function (req, res) {
-    res.status(200).json({
-        data: 'hello world！'
-    })
-})
 
 // 用户登录
 router.post('/login', async function (req, res) {
@@ -82,10 +76,10 @@ router.post("/register", async function (req, res) {
 router.get('/users', function (req, res) {
     findAllUsers().then(users => {
         console.log(users);
-        users = users.map((item)=>{
+        users = users.map((item) => {
             // 去除密码
-            const {id,name} = item;
-            return new User(id,name);
+            const { id, name } = item;
+            return new User(id, name);
         })
 
         res.status(200).json({
@@ -103,9 +97,17 @@ router.get('/users', function (req, res) {
 })
 
 // 获取用户基本情况
-router.post('/base',async (req,res)=>{
-    const {uid} = req.body;
-    try{
+router.post('/base', async (req, res) => {
+    const { uid } = req.body;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
+    try {
         // 好友数
         const friendList = await findFriendList(uid);
         // 贴文数
@@ -114,8 +116,8 @@ router.post('/base',async (req,res)=>{
         const classify = await findNoteByTag(uid);
         // console.log(friendList,noteList,classify)
         res.status(200).json({
-            status:1,
-            data:{
+            status: 1,
+            data: {
                 friendCount: friendList.length,
                 noteTotal: noteList.length,
                 classify
@@ -123,7 +125,7 @@ router.post('/base',async (req,res)=>{
             msg: ''
         })
 
-    }catch(e){
+    } catch (e) {
         console.log(e);
         res.status(500).json({
             status: -1,
@@ -131,6 +133,66 @@ router.post('/base',async (req,res)=>{
             msg: '',
         })
     }
+})
+
+// 搜索用户
+router.post("/searchuser", function (req, res) {
+    const { key } = req.body;
+    findUserByKey(key).then(users => {
+        console.log(users);
+        users = users.map((item) => {
+            // 去除密码
+            const { id, name } = item;
+            return new User(id, name);
+        })
+
+        res.status(200).json({
+            status: 1,
+            data: users,
+            msg: ''
+        });
+    }).catch(err => {
+        res.status(500).json({
+            status: -1,
+            data: null,
+            msg: '',
+        })
+    })
+})
+
+// 更新用户信息
+router.post("/updateuser", function (req, res) {
+    const { name, pwd, uid } = req.body;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
+    updateUser(uid, name, pwd).then(flag => {
+        if (flag === true) {
+            res.status(200).json({
+                status: 1,
+                data: flag,
+                msg: '修改用户信息成功'
+            });
+        } else {
+            res.status(200).json({
+                status: -1,
+                data: flag,
+                msg: '修改用户信息失败'
+            });
+        }
+
+    }).catch(err => {
+        res.status(500).json({
+            status: -1,
+            data: null,
+            msg: '',
+        })
+    })
 })
 
 

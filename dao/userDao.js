@@ -112,6 +112,21 @@ function updateUser(id,name,pwd) {
     })
 }
 
+// 根据关键字找用户
+function findUserByKey(key){
+    let sql = "select id,name from user where name like '%" + key + "%'";
+    let sqlParams = [];
+    return new Promise((resolve,reject)=>{
+        query(sql, sqlParams, function (err, res) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        })
+    })
+}
+
 module.exports = {
     addUser,
     findAllUsers,
@@ -120,4 +135,5 @@ module.exports = {
     findUserByNameAndPwd,
     findUserByName,
     updateUser,
+    findUserByKey,
 }

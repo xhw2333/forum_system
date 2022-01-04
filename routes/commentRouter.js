@@ -8,15 +8,22 @@ const router = express.Router();
 
 // 添加评论
 router.post('/addcomment', function (req, res) {
-    const {content,nid,uid} = req.body;
-
-    addComment(content,nid,uid).then(msg=>{
+    const { content, nid, uid } = req.body;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
+    addComment(content, nid, uid).then(msg => {
         res.status(200).json({
             status: 1,
             data: null,
             msg: '评论成功'
         })
-    }).catch(err=>{
+    }).catch(err => {
         res.status(500).json({
             status: -1,
             data: null,
@@ -27,14 +34,22 @@ router.post('/addcomment', function (req, res) {
 
 // 删除评论
 router.post('/deletecomment', function (req, res) {
-    const {cid,uid} = req.body;
-    deleteComment(cid,uid).then(msg=>{
+    const { cid, uid } = req.body;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
+    deleteComment(cid, uid).then(msg => {
         res.status(200).json({
             status: 1,
             data: null,
             msg: '删除成功'
         })
-    }).catch(err=>{
+    }).catch(err => {
         res.status(500).json({
             status: -1,
             data: null,

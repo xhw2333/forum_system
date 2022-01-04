@@ -35,6 +35,14 @@ router.get('/notelist', function (req, res) {
     // 查询特定用户的贴文
     else if ('uid' in query) {
         const { uid } = query;
+        if (uid <= 0) {
+            res.status(200).json({
+                status: 0,
+                msg: '无效用户。。',
+                data: null
+            })
+            return;
+        }
         findUserNote(uid).then(notes => {
             console.log(notes);
             const data = notes.map((note, index) => {
@@ -104,6 +112,14 @@ router.get('/notelist', function (req, res) {
 // 添加贴文
 router.post('/addnote', function (req, res) {
     const { title, content, tid, uid } = req.body;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
     addNote(title, content, tid, uid).then(result => {
         res.status(200).json({
             status: 1,
@@ -124,6 +140,14 @@ router.post('/addnote', function (req, res) {
 // 删除贴文
 router.post('/deletenote', function (req, res) {
     const { nid, uid } = req.body;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
     deleteNote(nid, uid).then(() => {
         res.status(200).json({
             status: 1,
@@ -141,8 +165,16 @@ router.post('/deletenote', function (req, res) {
 
 // 修改贴文
 router.post('/updatenote', function (req, res) {
-    const { title, content, tid, nid,uid } = req.body;
-    updateNote(title, content, tid, nid,uid).then(result => {
+    const { title, content, tid, nid, uid } = req.body;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
+    updateNote(title, content, tid, nid, uid).then(result => {
         res.status(200).json({
             status: 1,
             data: null,
