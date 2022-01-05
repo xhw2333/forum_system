@@ -4,7 +4,7 @@ const { formatDate } = require("../utils/format");
 
 // 添加贴文数据
 function addNote(title, content, tid, uid) {
-    let sql = "INSERT INTO note (nid,title,content,tid,date,uid) VALUES(0,?,?,?,?,?)";
+    let sql = "INSERT INTO note5384 (nid,title,content,tid,date,uid) VALUES(0,?,?,?,?,?)";
     let sqlParams = [
         title,
         content,
@@ -26,7 +26,7 @@ function addNote(title, content, tid, uid) {
 
 // 修改贴文
 function updateNote(title, content, tid, nid, uid) {
-    let sql = "update note set title = ? , content = ? ,tid = ? where nid = ? and uid = ?";
+    let sql = "update note5384 set title = ? , content = ? ,tid = ? where nid = ? and uid = ?";
     let sqlParams = [title, content, tid, nid, uid];
     return new Promise((resolve, reject) => {
         query(sql, sqlParams, function (err, res) {
@@ -46,18 +46,18 @@ function findAllNote() {
         select note.nid,uid,name,title,content,note.tid,date,comment,praise,color,tag
         from 
         (
-            select note.nid,count(comment.content) as comment from note left outer join comment
+            select note.nid,count(comment.content) as comment from note5384 as note left outer join comment5384 as comment
             on note.nid = comment.nid
             group by note.nid
         ) as data1,
         (
-            select note.nid,count(praise.uid) as praise from note left outer join praise
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
             on note.nid = praise.nid
             group by note.nid
         ) as data2,
-        user,
-        note,
-        tag
+        user5384 as user,
+        note5384 as note,
+        tag5384 as tag
         where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid
         order by note.nid
     `;
@@ -79,18 +79,18 @@ function findNote(nid) {
         select note.nid,uid,name,title,content,note.tid,date,comment,praise,color,tag
         from 
         (
-            select note.nid,count(comment.content) as comment from note left outer join comment
+            select note.nid,count(comment.content) as comment from note5384 as note left outer join comment5384 as comment
             on note.nid = comment.nid
             group by note.nid
         ) as data1,
         (
-            select note.nid,count(praise.uid) as praise from note left outer join praise
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
             on note.nid = praise.nid
             group by note.nid
         ) as data2,
-        user,
-        note,
-        tag
+        user5384 as user,
+        note5384 as note,
+        tag5384 as tag
         where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid and note.nid = ? 
     `;
     let sqlParams = [nid];
@@ -112,18 +112,18 @@ function findNoteByTid(tid) {
         select note.nid,uid,name,title,content,note.tid,date,comment,praise,color,tag
         from 
         (
-            select note.nid,count(comment.content) as comment from note left outer join comment
+            select note.nid,count(comment.content) as comment from note5384 as note left outer join comment5384 as comment
             on note.nid = comment.nid
             group by note.nid
         ) as data1,
         (
-            select note.nid,count(praise.uid) as praise from note left outer join praise
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
             on note.nid = praise.nid
             group by note.nid
         ) as data2,
-        user,
-        note,
-        tag
+        user5384 as user,
+        note5384 as note,
+        tag5384 as tag
         where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid and note.tid = ? 
         order by note.nid
     `;
@@ -142,23 +142,23 @@ function findNoteByTid(tid) {
 // 根据关键字查找贴文
 function findNoteByKey(key){
     let sql = `
-    select note.nid,uid,name,title,content,note.tid,date,comment,praise,color,tag
-    from 
-    (
-        select note.nid,count(comment.content) as comment from note left outer join comment
-        on note.nid = comment.nid
-        group by note.nid
-    ) as data1,
-    (
-        select note.nid,count(praise.uid) as praise from note left outer join praise
-        on note.nid = praise.nid
-        group by note.nid
-    ) as data2,
-    user,
-    note,
-    tag
-    where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid 
-    and (tag like '%${key}%' or name like '%${key}%' or title like '%${key}%' or content like '%${key}%')
+        select note.nid,uid,name,title,content,note.tid,date,comment,praise,color,tag
+        from 
+        (
+            select note.nid,count(comment.content) as comment from note5384 as note left outer join comment5384 as comment
+            on note.nid = comment.nid
+            group by note.nid
+        ) as data1,
+        (
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
+            on note.nid = praise.nid
+            group by note.nid
+        ) as data2,
+        user5384 as user,
+        note5384 as note,
+        tag5384 as tag
+        where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid 
+        and (tag like '%${key}%' or name like '%${key}%' or title like '%${key}%' or content like '%${key}%')
     `;
     let sqlParams = [];
     return new Promise((resolve, reject) => {
@@ -179,18 +179,18 @@ function findUserNote(uid) {
         select note.nid,uid,name,title,content,note.tid,date,comment,praise,color,tag
         from 
         (
-            select note.nid,count(comment.content) as comment from note left outer join comment
+            select note.nid,count(comment.content) as comment from note5384 as note left outer join comment5384 as comment
             on note.nid = comment.nid
             group by note.nid
         ) as data1,
         (
-            select note.nid,count(praise.uid) as praise from note left outer join praise
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
             on note.nid = praise.nid
             group by note.nid
         ) as data2,
-        user,
-        note,
-        tag
+        user5384 as user,
+        note5384 as note,
+        tag5384 as tag
         where data1.nid = data2.nid and data1.nid = note.nid and note.uid = user.id and tag.tid = note.tid and note.uid = ? 
         order by note.nid
     `;
@@ -208,7 +208,7 @@ function findUserNote(uid) {
 
 // 删除贴文
 function deleteNote(nid, uid) {
-    let sql = "delete from note where nid = ? and uid = ?";
+    let sql = "delete from note5384 where nid = ? and uid = ?";
     let sqlParams = [nid, uid];
     return new Promise((resolve, reject) => {
         query(sql, sqlParams, function (err, res) {
@@ -224,7 +224,7 @@ function deleteNote(nid, uid) {
 // 找某个用户的贴文分类发布情况
 function findNoteByTag(uid) {
     let sql = `
-    select tag, color,count(*) as count from note,tag
+    select tag, color,count(*) as count from note5384 as note,tag5384 as tag
     where note.tid = tag.tid and note.uid = ?
     group by note.tid;
     `;

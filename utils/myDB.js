@@ -8,7 +8,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'forum'
+    database: 'forum5384'
 })
 
 /* 封装数据库操作方法query -- 用于增删查改 */
