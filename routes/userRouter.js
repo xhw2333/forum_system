@@ -1,7 +1,7 @@
 const express = require("express");
 const svgCaptcha = require('svg-captcha');
 const User = require('../model/user');
-const { addUser, findUserByName, findUserByNameAndPwd, updateUser, findAllUsers, findUserByKey } = require('../dao/userDao');
+const { addUser, deleteUserBySelf, findUserByName, findUserByNameAndPwd, updateUser, findAllUsers, findUserByKey } = require('../dao/userDao');
 const { findFriendList } = require("../dao/friendDao");
 const { findUserNote, findNoteByTag } = require("../dao/noteDao");
 
@@ -9,13 +9,13 @@ const { findUserNote, findNoteByTag } = require("../dao/noteDao");
 const router = express.Router();
 
 //存储验证码
-let serve_code = ''; 
+let serve_code = '';
 
 // 用户登录
 router.post('/login', async function (req, res) {
-    const { name, pwd,code } = req.body;
+    const { name, pwd, code } = req.body;
     // 验证码错误
-    if(!code || code !== serve_code){
+    if (!code || code !== serve_code) {
         res.status(200).json({
             status: 0,
             data: null,
@@ -154,7 +154,7 @@ router.get('/code', function (req, res) {
         size: 4,// 验证码长度
         ignoreChars: '0o1i', // 验证码字符中排除 0o1i
         noise: 3, // 干扰线条的数量
-        width:100,
+        width: 100,
         height: 40,
         // background: '#fff'
     }
@@ -167,7 +167,7 @@ router.get('/code', function (req, res) {
     res.status(200).json({
         status: 1,
         msg: '验证码',
-        data:String(captcha.data),
+        data: String(captcha.data),
     });
 })
 
@@ -227,6 +227,41 @@ router.post("/updateuser", function (req, res) {
             status: -1,
             data: null,
             msg: '',
+        })
+    })
+})
+
+// 用户注销
+router.post("/logout", function (req, res) {
+    const { uid, name, pwd } = req.body;
+    if (uid <= 0) {
+        res.status(200).json({
+            status: 0,
+            msg: '无效用户。。',
+            data: null
+        })
+        return;
+    }
+    deleteUserBySelf(uid, name, pwd).then(flag => {
+        if (flag === true) {
+            res.status(200).json({
+                status: 1,
+                data: flag,
+                msg: '用户已注销'
+            });
+        } else {
+            res.status(200).json({
+                status: -1,
+                data: flag,
+                msg: '用户注销失败'
+            });
+        }
+
+    }).catch(err => {
+        res.status(500).json({
+            status: -1,
+            data: null,
+            msg: '服务器内部错误',
         })
     })
 })

@@ -127,6 +127,21 @@ function findUserByKey(key){
     })
 }
 
+// 删除用户信息
+function deleteUserBySelf(id,name,pwd){
+    let sql = 'delete from user5384 where id = ? and name = ? and pwd = ?';
+    let sqlParams = [id,name,pwd];
+    return new Promise((resolve, reject) => {
+        query(sql, sqlParams, function (err, res) {
+            if (err) {
+                reject(false);
+            } else {
+                resolve(true);
+            }
+        })
+    })
+}
+
 module.exports = {
     addUser,
     findAllUsers,
@@ -136,4 +151,5 @@ module.exports = {
     findUserByName,
     updateUser,
     findUserByKey,
+    deleteUserBySelf
 }

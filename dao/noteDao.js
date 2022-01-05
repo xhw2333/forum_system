@@ -221,6 +221,21 @@ function deleteNote(nid, uid) {
     })
 }
 
+// 删除贴文(管理员权限)
+function deleteNoteByNid(nid, uid) {
+    let sql = "delete from note5384 where nid = ?";
+    let sqlParams = [nid];
+    return new Promise((resolve, reject) => {
+        query(sql, sqlParams, function (err, res) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        })
+    })
+}
+
 // 找某个用户的贴文分类发布情况
 function findNoteByTag(uid) {
     let sql = `
@@ -250,4 +265,5 @@ module.exports = {
     findNoteByTag,
     findNoteByTid,
     findNoteByKey,
+    deleteNoteByNid,
 }
