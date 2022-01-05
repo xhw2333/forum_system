@@ -1,3 +1,3 @@
-# school_forum
+# forum_system
 
-校园论坛项目
+论坛系统
