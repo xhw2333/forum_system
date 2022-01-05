@@ -1,7 +1,6 @@
 const express = require('express');
 const Note = require("../model/note");
 const { addNote, findNote, findUserNote, deleteNote, updateNote, findAllNote, findNoteByTid,findNoteByKey } = require("../dao/noteDao");
-const { toArr, toStr } = require("../utils/typeChange");
 
 // 创建路由容器
 const router = express.Router();
