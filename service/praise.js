@@ -1,13 +1,15 @@
 // 点赞模块
-const express = require('express');
-const { addPraise, findPraiseCountByNid, cancelPraise, checkIfPraise } = require('../dao/praiseDao');
+const praiseDao = require('../dao/praiseDao');
 
-// 路由容器
-const router = express.Router();
 
-// 点赞贴文
-router.post('/praise', function (req, res) {
-    const { nid, uid } = req.body;
+/**
+ * @description 处理点赞贴文的逻辑
+ * @param {*} res 响应体
+ * @param {*} nid 贴文id
+ * @param {*} uid 用户id
+ * @returns 
+ */
+function praiseNote(res, nid, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -16,7 +18,7 @@ router.post('/praise', function (req, res) {
         })
         return;
     }
-    addPraise(nid, uid).then(msg => {
+    praiseDao.addPraise(nid, uid).then(msg => {
         res.status(200).json({
             status: 1,
             data: null,
@@ -30,11 +32,17 @@ router.post('/praise', function (req, res) {
             msg: ''
         })
     })
-})
+}
 
-// 取消点赞贴文
-router.post('/cancelpraise', function (req, res) {
-    const { nid, uid } = req.body;
+
+/**
+ * @description 处理取消点赞贴文的逻辑
+ * @param {*} res 响应体
+ * @param {*} nid 贴文id
+ * @param {*} uid 用户id
+ * @returns 
+ */
+function cancelPraise(res, nid, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -43,7 +51,7 @@ router.post('/cancelpraise', function (req, res) {
         })
         return;
     }
-    cancelPraise(nid, uid).then(msg => {
+    praiseDao.cancelPraise(nid, uid).then(msg => {
         res.status(200).json({
             status: 1,
             data: null,
@@ -57,11 +65,17 @@ router.post('/cancelpraise', function (req, res) {
             msg: ''
         })
     })
-})
+}
 
-// 检查是否有点赞
-router.get('/ifpraise', function (req, res) {
-    const { nid, uid } = req.query;
+
+/**
+ * @description 检查该用户是否有点赞过该贴文
+ * @param {*} res 响应体
+ * @param {*} nid 贴文id
+ * @param {*} uid 用户id
+ * @returns 
+ */
+function checkIfPraise(res, nid, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -70,7 +84,7 @@ router.get('/ifpraise', function (req, res) {
         })
         return;
     }
-    checkIfPraise(nid, uid).then(list => {
+    praiseDao.checkIfPraise(nid, uid).then(list => {
 
         res.status(200).json({
             status: 1,
@@ -84,6 +98,11 @@ router.get('/ifpraise', function (req, res) {
             msg: ''
         })
     })
-})
+}
 
-module.exports = router;
+
+module.exports = {
+    praiseNote,
+    cancelPraise,
+    checkIfPraise,
+};

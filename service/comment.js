@@ -1,14 +1,17 @@
 // 评论模块
-const express = require('express');
 const Comment = require('../model/comment');
-const { addComment, deleteComment, findCommentByNid } = require('../dao/commentDao');
+const commentDao = require('../dao/commentDao');
 
-// 创建路由容器
-const router = express.Router();
 
-// 添加评论
-router.post('/addcomment', function (req, res) {
-    const { content, nid, uid } = req.body;
+/**
+ * @description 处理添加评论的逻辑
+ * @param {*} res 响应体
+ * @param {*} content 内容
+ * @param {*} nid 贴文id
+ * @param {*} uid 用户id
+ * @returns 
+ */
+function addComment(res, content, nid, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -17,7 +20,7 @@ router.post('/addcomment', function (req, res) {
         })
         return;
     }
-    addComment(content, nid, uid).then(msg => {
+    commentDao.addComment(content, nid, uid).then(msg => {
         res.status(200).json({
             status: 1,
             data: null,
@@ -30,11 +33,17 @@ router.post('/addcomment', function (req, res) {
             msg: ''
         })
     })
-})
+}
 
-// 删除评论
-router.post('/deletecomment', function (req, res) {
-    const { cid, uid } = req.body;
+
+/**
+ * @description 处理删除评论的逻辑
+ * @param {*} res 响应体
+ * @param {*} cid 评论id
+ * @param {*} uid 用户id
+ * @returns 
+ */
+function deleteComment(res, cid, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -43,7 +52,7 @@ router.post('/deletecomment', function (req, res) {
         })
         return;
     }
-    deleteComment(cid, uid).then(msg => {
+    commentDao.deleteComment(cid, uid).then(msg => {
         res.status(200).json({
             status: 1,
             data: null,
@@ -56,15 +65,19 @@ router.post('/deletecomment', function (req, res) {
             msg: ''
         })
     })
-})
+}
 
-// 获取评论
-router.get('/commentlist', function (req, res) {
-    const { nid } = req.query;
-    findCommentByNid(nid).then(list => {
+
+/**
+ * @description 处理获取评论的逻辑
+ * @param {*} res 响应体
+ * @param {*} nid 贴文id
+ */
+function getCommentList(res, nid) {
+    commentDao.findCommentByNid(nid).then(list => {
         console.log(list);
         const data = list.map((item) => {
-            const { cid, content, nid, uid, name, commentNum } = item;
+            const { cid, content, nid, uid, name } = item;
             return new Comment(cid, content, nid, uid, name);
         })
         res.status(200).json({
@@ -80,7 +93,12 @@ router.get('/commentlist', function (req, res) {
             msg: ''
         })
     })
-})
+}
 
 
-module.exports = router;
+
+module.exports = {
+    addComment,
+    deleteComment,
+    getCommentList,
+};

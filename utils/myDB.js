@@ -11,7 +11,13 @@ const pool = mysql.createPool({
     database: 'forum5384'
 })
 
-/* 封装数据库操作方法query -- 用于增删查改 */
+/**
+ * @description 封装数据库操作方法query -- 用于增删查改
+ * @param {string} sql sql语句
+ * @param {Array} sqlParams sql参数
+ * @param {function} callback 回调函数,执行sql语句后进行的操作
+ * @return {}
+ */
 const query = (sql, sqlParams, callback) => {
     pool.getConnection(function (err, conn) {
         if (err) {

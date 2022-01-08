@@ -11,7 +11,6 @@ userDao.deleteUser(uid).then(res => {
     console.log(err);
 })
 
-
 // 添加标签
 let tag = '',
     color = '';
@@ -30,7 +29,7 @@ tagDao.deleteTag(tid).then(res => {
 })
 
 {
-    // 删除标签
+    // 更新标签
     let tid = 0,
         tag = 0,
         color = '';

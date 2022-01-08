@@ -1,30 +1,29 @@
-const express = require("express");
 const svgCaptcha = require('svg-captcha');
 const User = require('../model/user');
-const { addUser, deleteUserBySelf, findUserByName, findUserByNameAndPwd, updateUser, findAllUsers, findUserByKey } = require('../dao/userDao');
-const { findFriendList } = require("../dao/friendDao");
-const { findUserNote, findNoteByTag } = require("../dao/noteDao");
+const userDao = require('../dao/userDao');
+const friendDao = require("../dao/friendDao");
+const noteDao = require("../dao/noteDao");
+const global = require("../utils/global");
 
-// 创建路由容器
-const router = express.Router();
-
-//存储验证码
-let serve_code = '';
-
-// 用户登录
-router.post('/login', async function (req, res) {
-    const { name, pwd, code } = req.body;
+/**
+ * @description 处理登录的逻辑
+ * @param {*} res 响应体
+ * @param {*} name 用户名
+ * @param {*} pwd 密码
+ * @param {*} code 验证码
+ * @returns 
+ */
+async function login(res, name, pwd, code) {
     // 验证码错误
-    if (!code || code !== serve_code) {
-        res.status(200).json({
+    if (!code || code !== global.code) {
+        return res.status(200).json({
             status: 0,
             data: null,
             msg: '验证码错误'
         })
-        return;
     }
     try {
-        const user = await findUserByNameAndPwd(name, pwd);
+        const user = await userDao.findUserByNameAndPwd(name, pwd);
         if (user.length == 0) return res.status(200).json({
             status: 0,
             data: null,
@@ -45,20 +44,26 @@ router.post('/login', async function (req, res) {
             msg: '',
         })
     }
-})
+}
 
-// 用户注册
-router.post("/register", async function (req, res) {
-    const { name, pwd } = req.body;
+/**
+ * @description 处理注册的逻辑
+ * @param {*} res 响应体
+ * @param {*} name 用户名
+ * @param {*} pwd 密码
+ * @returns 
+ */
+async function register(res, name, pwd) {
     try {
-        const ifHas = await findUserByName(name);
+        // 判断用户是否已经存在
+        const ifHas = await userDao.findUserByName(name);
         if (ifHas) return res.status(200).json({
             status: 0,
             data: null,
             msg: '该用户已存在'
         })
 
-        addUser(name, pwd).then(result => {
+        userDao.addUser(name, pwd).then(result => {
             console.log(result ? '插入成功' : '插入失败');
 
             res.status(200).json({
@@ -83,11 +88,14 @@ router.post("/register", async function (req, res) {
             msg: '',
         })
     }
-})
+}
 
-// 获取用户列表
-router.get('/users', function (req, res) {
-    findAllUsers().then(users => {
+/**
+ * @description 处理获取用户列表的逻辑
+ * @param {*} res 响应体
+ */
+function getUserList(res) {
+    userDao.findAllUsers().then(users => {
         console.log(users);
         users = users.map((item) => {
             // 去除密码
@@ -107,11 +115,15 @@ router.get('/users', function (req, res) {
             msg: '',
         })
     })
-})
+}
 
-// 获取用户基本情况
-router.post('/base', async (req, res) => {
-    const { uid } = req.body;
+/**
+ * @description 处理获取用户基本情况的逻辑
+ * @param {*} res 响应体
+ * @param {*} uid 用户id
+ * @returns 
+ */
+async function getUserBase(res, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -122,11 +134,11 @@ router.post('/base', async (req, res) => {
     }
     try {
         // 好友数
-        const friendList = await findFriendList(uid);
+        const friendList = await friendDao.findFriendList(uid);
         // 贴文数
-        const noteList = await findUserNote(uid);
+        const noteList = await noteDao.findUserNote(uid);
         // 贴文分类情况
-        const classify = await findNoteByTag(uid);
+        const classify = await noteDao.findNoteByTag(uid);
         // console.log(friendList,noteList,classify)
         res.status(200).json({
             status: 1,
@@ -146,10 +158,13 @@ router.post('/base', async (req, res) => {
             msg: '',
         })
     }
-})
+}
 
-// 获取验证码
-router.get('/code', function (req, res) {
+/**
+ * @description 处理生成验证码的逻辑
+ * @param {*} res 响应体
+ */
+function getCode(res) {
     var codeConfig = {
         size: 4,// 验证码长度
         ignoreChars: '0o1i', // 验证码字符中排除 0o1i
@@ -160,7 +175,8 @@ router.get('/code', function (req, res) {
     }
     // 生成验证码
     var captcha = svgCaptcha.create(codeConfig);
-    serve_code = captcha.text.toLowerCase();
+    // 存储验证码
+    global.code = captcha.text.toLowerCase();
     // console.log(serve_code);
 
     // res.setHeader('Content-Type', 'image/svg+xml');
@@ -169,12 +185,15 @@ router.get('/code', function (req, res) {
         msg: '验证码',
         data: String(captcha.data),
     });
-})
+}
 
-// 搜索用户
-router.post("/searchuser", function (req, res) {
-    const { key } = req.body;
-    findUserByKey(key).then(users => {
+/**
+ * @description 处理搜索用户的逻辑
+ * @param {*} res 响应体
+ * @param {*} key 关键字
+ */
+function searchUser(res, key) {
+    userDao.findUserByKey(key).then(users => {
         console.log(users);
         users = users.map((item) => {
             // 去除密码
@@ -194,11 +213,17 @@ router.post("/searchuser", function (req, res) {
             msg: '',
         })
     })
-})
+}
 
-// 更新用户信息
-router.post("/updateuser", function (req, res) {
-    const { name, pwd, uid } = req.body;
+/**
+ * @description 处理更新用户信息的逻辑
+ * @param {*} res 响应体
+ * @param {*} name 用户名
+ * @param {*} pwd 密码
+ * @param {*} uid 用户id
+ * @returns 
+ */
+function updateUser(res, name, pwd, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -207,7 +232,7 @@ router.post("/updateuser", function (req, res) {
         })
         return;
     }
-    updateUser(uid, name, pwd).then(flag => {
+    userDao.updateUser(uid, name, pwd).then(flag => {
         if (flag === true) {
             res.status(200).json({
                 status: 1,
@@ -229,11 +254,17 @@ router.post("/updateuser", function (req, res) {
             msg: '',
         })
     })
-})
+}
 
-// 用户注销
-router.post("/logout", function (req, res) {
-    const { uid, name, pwd } = req.body;
+/**
+ * @description 处理用户注销的逻辑
+ * @param {*} res 响应体
+ * @param {*} uid 用户id
+ * @param {*} name 用户名
+ * @param {*} pwd 密码
+ * @returns 
+ */
+function logout(res, uid, name, pwd) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -242,7 +273,7 @@ router.post("/logout", function (req, res) {
         })
         return;
     }
-    deleteUserBySelf(uid, name, pwd).then(flag => {
+    userDao.deleteUserBySelf(uid, name, pwd).then(flag => {
         if (flag === true) {
             res.status(200).json({
                 status: 1,
@@ -264,7 +295,15 @@ router.post("/logout", function (req, res) {
             msg: '服务器内部错误',
         })
     })
-})
+}
 
-
-module.exports = router;
+module.exports = {
+    login,
+    register,
+    getUserList,
+    getUserBase,
+    getCode,
+    searchUser,
+    updateUser,
+    logout,
+}

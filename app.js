@@ -1,11 +1,11 @@
-var express = require("express");
-var bodyParser = require("body-parser");
-var userRouter = require("./routes/userRouter.js");
-var noteRouter = require("./routes/noteRouter");
-var commentRouter= require("./routes/commentRouter");
-var praiseRouter= require("./routes/praiseRouter");
-var friendRouter= require("./routes/friendRouter");
-var tagRouter= require("./routes/tagRouter");
+const express = require("express");
+const bodyParser = require("body-parser");
+const userRouter = require("./controller/user");
+const noteRouter = require("./controller/note");
+const commentRouter= require("./controller/comment");
+const praiseRouter= require("./controller/praise");
+const friendRouter= require("./controller/friend");
+const tagRouter= require("./controller/tag");
 const cors = require('cors');
 
 var app = express();

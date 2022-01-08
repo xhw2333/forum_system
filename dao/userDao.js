@@ -22,7 +22,8 @@ function addUser(name, pwd) {
 
 // 查看所有用户
 function findAllUsers() {
-    let sql = "SELECT * FROM user5384";
+    // let sql = "SELECT * FROM user5384";
+    let sql = "SELECT * FROM user_view5384";
     return new Promise((resolve, reject) => {
         query(sql, null, function (err, res) {
             if (err) {
@@ -37,7 +38,7 @@ function findAllUsers() {
 
 // 根据id找用户
 function findUserById(id) {
-    let sql = "SELECT * FROM user5384 WHERE id = ?";
+    let sql = "SELECT * FROM user_view5384 WHERE id = ?";
     let sqlParams = [id];
     return new Promise((resolve, reject) => {
         query(sql, sqlParams, function (err, res) {
@@ -67,7 +68,7 @@ function findUserByNameAndPwd(name, pwd) {
 
 // 根据名字找用户，用于查重
 function findUserByName(name) {
-    let sql = "SELECT * FROM user5384 WHERE name = ?";
+    let sql = "SELECT * FROM user_view5384 WHERE name = ?";
     let sqlParams = [name];
     return new Promise((resolve, reject) => {
         query(sql, sqlParams, function (err, res) {
@@ -114,7 +115,7 @@ function updateUser(id,name,pwd) {
 
 // 根据关键字找用户
 function findUserByKey(key){
-    let sql = "select id,name from user5384 where name like '%" + key + "%'";
+    let sql = "select * from user_view5384 where name like '%" + key + "%'";
     let sqlParams = [];
     return new Promise((resolve,reject)=>{
         query(sql, sqlParams, function (err, res) {

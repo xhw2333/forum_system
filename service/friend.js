@@ -1,13 +1,15 @@
 // 好友模块
-const express = require('express');
-const { findFriendList, findRelate, deleteFriend, addFriend } = require('../dao/friendDao');
+const friendDao = require('../dao/friendDao');
 const User = require('../model/user');
 
-const router = express.Router();
-
-// 添加好友
-router.post('/addfriend', function (req, res) {
-    const { uid, fid } = req.body;
+/**
+ * @description 处理添加好友逻辑
+ * @param {*} res 响应体
+ * @param {*} uid 用户id
+ * @param {*} fid 好友id
+ * @returns 
+ */
+function addFriend(res, uid, fid) {
     if (uid <= 0 || fid <= 0) {
         res.status(200).json({
             status: 0,
@@ -25,9 +27,9 @@ router.post('/addfriend', function (req, res) {
         })
         return;
     }
-    findRelate(uid, fid).then(list => {
+    friendDao.findRelate(uid, fid).then(list => {
         if (list.length !== 0) return true;
-        return addFriend(uid, fid);
+        return friendDao.addFriend(uid, fid);
     }).then((flag) => {
         if (flag == true) {
             res.status(200).json({
@@ -50,12 +52,17 @@ router.post('/addfriend', function (req, res) {
             msg: ''
         })
     })
-})
+}
 
-// 删除好友
-router.post('/deletefriend', function (req, res) {
-    const { uid, fid } = req.body;
-    deleteFriend(uid, fid).then(msg => {
+
+/**
+ * @description 处理删除好友逻辑
+ * @param {*} res 响应体
+ * @param {*} uid 用户id
+ * @param {*} fid 好友id
+ */
+function deleteFriend(res, uid, fid) {
+    friendDao.deleteFriend(uid, fid).then(msg => {
         res.status(200).json({
             status: 1,
             data: null,
@@ -68,11 +75,16 @@ router.post('/deletefriend', function (req, res) {
             msg: ''
         })
     })
-})
+}
 
-// 获取好友列表
-router.get('/friendlist', function (req, res) {
-    const { uid } = req.query;
+
+/**
+ * @description 处理获取好友列表逻辑
+ * @param {*} res 响应体
+ * @param {*} uid 用户id
+ * @returns 
+ */
+function getFriendList(res, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -81,7 +93,7 @@ router.get('/friendlist', function (req, res) {
         })
         return;
     }
-    findFriendList(uid).then(list => {
+    friendDao.findFriendList(uid).then(list => {
         const data = list.map((item) => {
             const { friends, name } = item;
             return new User(friends, name);
@@ -98,7 +110,11 @@ router.get('/friendlist', function (req, res) {
             msg: ''
         })
     })
-})
+}
 
 
-module.exports = router;
+module.exports = {
+    addFriend,
+    deleteFriend,
+    getFriendList,
+};
