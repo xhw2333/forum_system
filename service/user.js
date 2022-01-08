@@ -41,7 +41,7 @@ async function login(res, name, pwd, code) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: '',
+            msg: '服务器内部错误',
         })
     }
 }
@@ -77,7 +77,7 @@ async function register(res, name, pwd) {
             res.status(500).json({
                 status: -1,
                 data: null,
-                msg: '',
+                msg: '服务器内部错误',
             })
         })
 
@@ -85,7 +85,7 @@ async function register(res, name, pwd) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: '',
+            msg: '服务器内部错误',
         })
     }
 }
@@ -106,13 +106,13 @@ function getUserList(res) {
         res.status(200).json({
             status: 1,
             data: users,
-            msg: ''
+            msg: '获取用户列表成功'
         });
     }).catch(err => {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: '',
+            msg: '服务器内部错误',
         })
     })
 }
@@ -147,7 +147,7 @@ async function getUserBase(res, uid) {
                 noteTotal: noteList.length,
                 classify
             },
-            msg: ''
+            msg: '获取用户基本情况成功'
         })
 
     } catch (e) {
@@ -155,7 +155,7 @@ async function getUserBase(res, uid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: '',
+            msg: '服务器内部错误',
         })
     }
 }
@@ -204,13 +204,13 @@ function searchUser(res, key) {
         res.status(200).json({
             status: 1,
             data: users,
-            msg: ''
+            msg: '搜索结果已展示'
         });
     }).catch(err => {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: '',
+            msg: '服务器内部错误',
         })
     })
 }
@@ -251,7 +251,7 @@ function updateUser(res, name, pwd, uid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: '',
+            msg: '服务器内部错误',
         })
     })
 }

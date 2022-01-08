@@ -49,7 +49,7 @@ function addFriend(res, uid, fid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }
@@ -72,7 +72,7 @@ function deleteFriend(res, uid, fid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }
@@ -107,7 +107,7 @@ function getFriendList(res, uid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }

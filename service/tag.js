@@ -10,13 +10,13 @@ function getTagList(res) {
         res.status(200).json({
             status: 1,
             data: tags,
-            msg: ''
+            msg: '获取标签成功'
         })
     }).catch(err => {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }

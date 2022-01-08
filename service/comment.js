@@ -30,7 +30,7 @@ function addComment(res, content, nid, uid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }
@@ -62,7 +62,7 @@ function deleteComment(res, cid, uid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }
@@ -83,14 +83,14 @@ function getCommentList(res, nid) {
         res.status(200).json({
             status: 1,
             data,
-            msg: ''
+            msg: '获取评论成功'
         })
     }).catch(err => {
         console.log(err);
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }

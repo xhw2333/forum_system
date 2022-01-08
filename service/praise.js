@@ -29,7 +29,7 @@ function praiseNote(res, nid, uid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }
@@ -62,7 +62,7 @@ function cancelPraise(res, nid, uid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }
@@ -95,7 +95,7 @@ function checkIfPraise(res, nid, uid) {
         res.status(500).json({
             status: -1,
             data: null,
-            msg: ''
+            msg: '服务器内部错误'
         })
     })
 }
