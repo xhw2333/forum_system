@@ -51,7 +51,8 @@ function findAllNote() {
             group by note.nid
         ) as data1,
         (
-            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join 
+            (select * from praise5384 where flag = 1) as praise
             on note.nid = praise.nid
             group by note.nid
         ) as data2,
@@ -72,7 +73,7 @@ function findAllNote() {
     })
 }
 
-// 查找贴文
+// 根据贴文id查找贴文
 function findNote(nid) {
     // let sql = "SELECT nid,uid,name,title,content,tag,date FROM note,user WHERE nid = ? AND note.uid = user.id";
     let sql = `
@@ -84,7 +85,8 @@ function findNote(nid) {
             group by note.nid
         ) as data1,
         (
-            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join 
+            (select * from praise5384 where flag = 1) as praise
             on note.nid = praise.nid
             group by note.nid
         ) as data2,
@@ -105,9 +107,8 @@ function findNote(nid) {
     })
 }
 
-// 查找贴文
+// 根据标签id查找贴文
 function findNoteByTid(tid) {
-    // let sql = "SELECT nid,uid,name,title,content,tag,date FROM note,user WHERE nid = ? AND note.uid = user.id";
     let sql = `
         select note.nid,uid,name,title,content,note.tid,date,comment,praise,color,tag
         from 
@@ -117,7 +118,8 @@ function findNoteByTid(tid) {
             group by note.nid
         ) as data1,
         (
-            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join 
+            (select * from praise5384 where flag = 1) as praise
             on note.nid = praise.nid
             group by note.nid
         ) as data2,
@@ -150,7 +152,8 @@ function findNoteByKey(key){
             group by note.nid
         ) as data1,
         (
-            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join 
+            (select * from praise5384 where flag = 1) as praise
             on note.nid = praise.nid
             group by note.nid
         ) as data2,
@@ -184,7 +187,8 @@ function findUserNote(uid) {
             group by note.nid
         ) as data1,
         (
-            select note.nid,count(praise.uid) as praise from note5384 as note left outer join praise5384 as praise
+            select note.nid,count(praise.uid) as praise from note5384 as note left outer join 
+            (select * from praise5384 where flag = 1) as praise
             on note.nid = praise.nid
             group by note.nid
         ) as data2,

@@ -9,7 +9,7 @@ const praiseDao = require('../dao/praiseDao');
  * @param {*} uid 用户id
  * @returns 
  */
-function praiseNote(res, nid, uid) {
+async function praiseNote(res, nid, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -18,20 +18,30 @@ function praiseNote(res, nid, uid) {
         })
         return;
     }
-    praiseDao.addPraise(nid, uid).then(msg => {
+
+    try {
+        const ans = await praiseDao.checkIfData(nid, uid,);
+        // 无数据，进行插入操作
+        if (ans.length === 0) {
+            await praiseDao.insertData(nid, uid, 1);
+        }
+        // 进行更新操作
+        else {
+            await praiseDao.addPraise(nid, uid);
+        }
         res.status(200).json({
             status: 1,
             data: null,
             msg: '点赞成功'
         })
-    }).catch(err => {
+    } catch (err) {
         console.log(err);
         res.status(500).json({
             status: -1,
             data: null,
             msg: '服务器内部错误'
         })
-    })
+    }
 }
 
 
@@ -42,7 +52,7 @@ function praiseNote(res, nid, uid) {
  * @param {*} uid 用户id
  * @returns 
  */
-function cancelPraise(res, nid, uid) {
+async function cancelPraise(res, nid, uid) {
     if (uid <= 0) {
         res.status(200).json({
             status: 0,
@@ -51,20 +61,31 @@ function cancelPraise(res, nid, uid) {
         })
         return;
     }
-    praiseDao.cancelPraise(nid, uid).then(msg => {
+
+
+    try {
+        const ans = await praiseDao.checkIfData(nid, uid);
+        // 无数据，进行插入操作
+        if (ans.length === 0) {
+            await praiseDao.insertData(nid, uid, 0);
+        }
+        // 进行更新操作
+        else {
+            await praiseDao.cancelPraise(nid, uid);
+        }
         res.status(200).json({
             status: 1,
             data: null,
             msg: '已取消赞'
         })
-    }).catch(err => {
+    } catch (err) {
         console.log(err);
         res.status(500).json({
             status: -1,
             data: null,
             msg: '服务器内部错误'
         })
-    })
+    }
 }
 
 
